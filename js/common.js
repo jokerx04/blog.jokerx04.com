@@ -1,19 +1,75 @@
-// Google Analytics
-(function() {
-	const GA_TRACKING_ID = 'G-1W33PGE8L1';
+(function (global, factory) {
+	'use strict';
 	
-	const script = document.createElement('script');
-	script.async = true;
-	script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`;
-	document.head.appendChild(script);
+	if ((typeof exports === 'object') && (typeof module !== 'undefined')) {
+		module.exports = factory();
+	} else if ((typeof define === 'function') && define.amd) {
+		define(factory);
+	} else if (typeof globalThis !== 'undefined') {
+		global = globalThis;
+		
+		global.common = factory();
+	} else {
+		global = self;
+		
+		global.common = factory();
+	}
+})(this, (function () {
+	'use strict';
+
+	const globalScope = typeof window !== 'undefined' ? window : (typeof globalThis !== 'undefined' ? globalThis : self);
 	
-	window.dataLayer = window.dataLayer || [];
-	function gtag() {
-		window.dataLayer.push(arguments);
+	const defaults = {
+		'DATE_FORMAT': 'yyyy-MM-dd E HH:mm:ss.SSS',
+		'GA_TRACKING_ID': 'G-1W33PGE8L1',
+		'corsAnywhereServerUrl': 'https://cors.common.com/'
 	}
 	
-	window.gtag = gtag;
+	const common = function (options) {
+		Object.assign(defaults, options);
+		
+		// ASCII Art 텍스트 생성 : https://patorjk.com/software/taag
+		console.log(`
+%c ██████╗ ██████╗ ███╗   ███╗███╗   ███╗ ██████╗ ███╗   ██╗     █████╗ ██████╗ ██╗
+%c██╔════╝██╔═══██╗████╗ ████║████╗ ████║██╔═══██╗████╗  ██║    ██╔══██╗██╔══██╗██║
+%c██║     ██║   ██║██╔████╔██║██╔████╔██║██║   ██║██╔██╗ ██║    ███████║██████╔╝██║
+%c██║     ██║   ██║██║╚██╔╝██║██║╚██╔╝██║██║   ██║██║╚██╗██║    ██╔══██║██╔═══╝ ██║
+%c╚██████╗╚██████╔╝██║ ╚═╝ ██║██║ ╚═╝ ██║╚██████╔╝██║ ╚████║    ██║  ██║██║     ██║
+%c ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═══╝    ╚═╝  ╚═╝╚═╝     ╚═╝
+				`, 'color: #084081', 'color: #0868AC', 'color: #2B8CBE', 'color: #4EB3D3', 'color: #7BCCC4', 'color: #A8DDB5');
+		
+		console.table(defaults);
+	};
+
+	common.googleAnalytics = function (gaTrackingId = defaults.GA_TRACKING_ID) {
+		if (typeof document !== 'undefined') {
+			const scriptId = `script-googleAnalytics-${gaTrackingId}`;
+			
+			if (!document.getElementById(scriptId)) {
+				const script = document.createElement('script');
+				
+				script.id = scriptId;
+				script.async = true;
+				script.src = `https://www.googletagmanager.com/gtag/js?id=${gaTrackingId}`;
+				
+				document.head.appendChild(script);
+			}
+		}
+		
+		globalScope.dataLayer = globalScope.dataLayer || [];
+		
+		function gtag() {
+			globalScope.dataLayer.push(arguments);
+		}
+		
+		globalScope.gtag = gtag;
+		
+		gtag('js', new Date());
+		gtag('config', gaTrackingId);
+	};
+
+	common.defaults = defaults;
+	common.googleAnalytics();
 	
-	gtag('js', new Date());
-	gtag('config', GA_TRACKING_ID);
-})();
+	return common;
+}));
