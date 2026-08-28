@@ -59,7 +59,7 @@
 	};
 
 	common.defaults = defaults;
-	common.googleAnalytics();
+	common.googleAnalytics(defaults.GA_TRACKING_ID);
 	
 	return common;
 }));
